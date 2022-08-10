@@ -1,0 +1,21 @@
+@import "./normalize.scss";
+
+html,
+body,
+#app {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+.el-scrollbar__wrap {
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+  margin-bottom: 0 !important;
+}
+.el-scrollbar__view {
+  overflow-x: hidden;
+}
+// .el-input-label,
+// .el-input-number {
+//   width: 100%;
+// }
