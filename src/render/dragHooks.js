@@ -7,6 +7,7 @@ export const dragHooks = (currentElement, vue) => {
     currentElement.optionDataKey = renderKey;
     vue.$store.commit("pageConfig/setVmData", {
       type: "data",
+      renderKey,
       params: {
         field: `${camelCase(tag)}Options-${index++}`,
         title: `${name}选项数据`,
@@ -34,6 +35,7 @@ export const dragHooks = (currentElement, vue) => {
     };
     vue.$store.commit("pageConfig/setVmData", {
       type: "data",
+      renderKey,
       params: {
         field,
         title: `${name}列配置`,

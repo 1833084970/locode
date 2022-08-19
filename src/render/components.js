@@ -1769,7 +1769,9 @@ const extendOptions = {
       label: "headerName",
       component: {
         name: "el-input",
+        defaultVal: "",
         value: "",
+        required: true,
         props: {}
       }
     },
@@ -1778,18 +1780,21 @@ const extendOptions = {
       label: "field",
       component: {
         name: "el-input",
+        defaultVal: "",
         value: "",
+        required: true,
         props: {}
       }
     },
     {
       field: "width",
       label: "width",
-      // format: function (val) {
-      //   return val ? val + "px" : "";
-      // },
+      format: function (val) {
+        return val ? val + "px" : "";
+      },
       component: {
         name: "el-input-number",
+        defaultVal: 100,
         value: 100,
         props: {}
       }

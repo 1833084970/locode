@@ -86,10 +86,10 @@ export default {
         foldingStrategy: "indentation",
       });
       this.monacoEditor.onDidChangeModelContent(
-        debounce(100, (event) => {
+        debounce(100, () => {
           let value = this.monacoEditor.getValue();
           if (this.value !== value) {
-            this.$emit("input", value, event);
+            this.$emit("input", value);
             this.dispatch("ElFormItem", "el.form.change", value);
           }
         })

@@ -58,7 +58,6 @@ function norlizeClass(classStr) {
   });
 }
 function buildDataObject(h, confClone, dataObject, children) {
-  debugger;
   confClone.attrs?.forEach((attr) => {
     if (attr.notHandleAttr) {
       return;
@@ -72,14 +71,16 @@ function buildDataObject(h, confClone, dataObject, children) {
       return;
     }
 
-    if (attr.field == "columnDefs" && confClone.tag == "ag-grid-vue") {
-      let attrValue = [];
-      if (attr.value) {
-        attrValue = this.$store.state.pageConfig.vmData.data[attr.value].defaultValue;
-        attrValue = parse(attrValue);
+    if (confClone.tag == "ag-grid-vue") {
+      if (attr.field == "columnDefs" || attr.field == "rowData") {
+        let attrValue = [];
+        if (attr.value && this.$store.state.pageConfig.vmData.data[attr.value]) {
+          attrValue = this.$store.state.pageConfig.vmData.data[attr.value].defaultValue;
+          attrValue = parse(attrValue);
+        }
+        dataObject.attrs[attr.field] = attrValue;
+        return;
       }
-      dataObject.attrs[attr.field] = attrValue;
-      return;
     }
 
     //该配置项的值为 组件的默认插槽时，按插槽属性来处理

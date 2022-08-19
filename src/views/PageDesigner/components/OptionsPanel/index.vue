@@ -1,17 +1,17 @@
 <template>
   <div class="options-panel">
     <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
-      <el-tab-pane label="属性" name="attr">
+      <el-tab-pane label="属性" name="attr" key="attr" v-if="hasAttr">
         <el-scrollbar style="height: 100%">
           <attr-options :activeComponent="activeComponent"></attr-options>
         </el-scrollbar>
       </el-tab-pane>
-      <el-tab-pane label="插槽" name="slot">
+      <el-tab-pane label="插槽" name="slot" key="slot" v-if="hasSlot">
         <el-scrollbar style="height: 100%">
           <slot-options :activeComponent="activeComponent"></slot-options>
         </el-scrollbar>
       </el-tab-pane>
-      <el-tab-pane label="事件" name="event">
+      <el-tab-pane label="事件" name="event" key="event" v-if="hasEvent">
         <event-options :activeComponent="activeComponent"></event-options>
       </el-tab-pane>
     </el-tabs>
@@ -46,6 +46,22 @@ export default {
       if (activeElementId && vmComponents) {
         return findElement(activeElementId, vmComponents)?.[0] || {};
       }
+      return {};
+    },
+    hasAttr() {
+      return (
+        this.activeComponent.attrs && this.activeComponent.attrs.length > 0
+      );
+    },
+    hasSlot() {
+      return (
+        this.activeComponent.slots && this.activeComponent.slots.length > 0
+      );
+    },
+    hasEvent() {
+      return (
+        this.activeComponent.events && this.activeComponent.events.length > 0
+      );
     },
     // activeComponentKey() {
     //   return this.activeComponent.renderKey;

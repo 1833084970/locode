@@ -88,6 +88,7 @@
         </el-form-item>
       </template>
     </el-form>
+    <CodemirrorEditor></CodemirrorEditor>
   </div>
 </template>
 

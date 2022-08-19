@@ -62,13 +62,18 @@ export default {
   watch: {
     "model.component.value"(val) {
       this.$set(this.model, "value", this.model.component.format?.(val) ?? val);
+      this.$emit("change", val);
     },
   },
   methods: {},
   render(h) {
     let child = slotRender.call(this, h);
     let main = mainRender.call(this, h, child);
-    return <el-form-item label={this.model.label}>{main}</el-form-item>;
+    return (
+      <el-form-item label={this.model.label} prop={this.model.field}>
+        {main}
+      </el-form-item>
+    );
   },
 };
 </script>

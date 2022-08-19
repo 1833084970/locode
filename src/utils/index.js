@@ -84,24 +84,24 @@ export const beautifierConf = {
   }
 };
 
-export function stringify(obj) {
+export function stringify(obj, callbackFn) {
   return JSON.stringify(obj, (key, val) => {
     if (_typeof(val) === "Function" || _typeof(val) === "Undefined") {
       return `${val}`;
     }
-    return val;
+    return callbackFn ? callbackFn(key, val) : val;
   });
 }
 
-export function parse(str) {
-  return JSON.parse(str, (k, v) => {
-    if (v?.indexOf && v.indexOf("function") > -1) {
-      return eval(`(${v})`);
+export function parse(str, callbackFn) {
+  return JSON.parse(str, (key, val) => {
+    if (val?.indexOf && val.indexOf("function") > -1) {
+      return eval(`(${val})`);
     }
-    if (v === "undefined") {
+    if (val === "undefined") {
       return null;
     }
-    return v;
+    return callbackFn ? callbackFn(key, val) : val;
   });
 }
 

@@ -74,8 +74,9 @@ const mutations = {
     // state.vmFunctions.watch = vmFunctions?.watch || {};
   },
   setVmData(state, options) {
-    let { type, params } = options;
-    Vue.set(state.vmData[type], params.renderKey, params);
+    let { type, renderKey, params } = options;
+    let oldVal = state.vmData[type][renderKey] || {};
+    Vue.set(state.vmData[type], renderKey, { ...oldVal, ...params, renderKey });
   }
 };
 
