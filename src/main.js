@@ -30,6 +30,10 @@ Vue.component("draggable", draggable);
 import Fragment from "vue-fragment";
 Vue.use(Fragment.Plugin);
 
+import VueCodemirror from "vue-codemirror";
+import "codemirror/lib/codemirror.css";
+Vue.use(VueCodemirror);
+
 import { AgGridVue } from "ag-grid-vue";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
