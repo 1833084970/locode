@@ -52,7 +52,8 @@ export default {
           this.$refs.monacoEditor,
           {
             value: this.codeStr,
-            theme: "vs-dark",
+            // theme: "vs-dark",
+            theme: "hc-light",
             language: this.type,
             automaticLayout: true,
             tabSize: 4,

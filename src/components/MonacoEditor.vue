@@ -37,6 +37,12 @@ export default {
         return {};
       },
     },
+    option: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
   },
   mixins: [Emitter],
   data() {
@@ -79,11 +85,13 @@ export default {
     initMonaco() {
       this.monacoEditor = this.$monaco.editor.create(this.$refs.monacoEditor, {
         value: this.value,
-        theme: "vs-dark",
+        // theme: "vs-dark",
+        theme: "hc-light",
         language: this.language,
         automaticLayout: true,
         tabSize: 4,
         foldingStrategy: "indentation",
+        ...this.option,
       });
       this.monacoEditor.onDidChangeModelContent(
         debounce(100, () => {
@@ -103,6 +111,9 @@ export default {
 .editor-container {
   display: flex;
   flex-wrap: wrap;
+  background: #f7f7f7;
+  box-shadow: 0px 0px 5px #dcdfe6;
+  border: 1px solid #dcdfe6;
   > div {
     width: 100%;
   }
