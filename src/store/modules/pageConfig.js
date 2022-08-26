@@ -23,11 +23,12 @@ const state = {
   vmFunctions: {
     methods: {
       // {
+      //   renderKey: "",
       //   field: "",
-      //   title: "",
       //   description: "",
       //   params: "",
-      //   value: "",
+      //   template: "",
+      //   extraVar: {  }
       // }
     }
     // watch: {

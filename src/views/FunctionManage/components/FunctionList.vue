@@ -28,13 +28,17 @@
           <el-table-column type="selection" width="40"> </el-table-column>
           <el-table-column prop="field" label="方法名称" header-align="center">
           </el-table-column>
-          <el-table-column prop="title" label="中文名称" header-align="center">
-          </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             prop="params"
             label="形参"
             header-align="center"
             width="100"
+          >
+          </el-table-column> -->
+          <el-table-column
+            prop="description"
+            label="描述"
+            header-align="center"
           >
           </el-table-column>
         </el-table>
@@ -74,10 +78,13 @@ export default {
       let renderKey = key + "-" + createKey();
       let row = {
         renderKey,
-        field: "",
-        title: "",
+        field: "customFunction",
         description: "",
         params: "",
+        extraVar: {
+          code1: "",
+        },
+        template: "customFunction", //默认自定义事件
       };
       this.$set(this.vmFunctions[key], renderKey, row);
       this.$refs[key][0].setCurrentRow(row);

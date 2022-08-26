@@ -349,11 +349,15 @@ export default {
       this.handleClose();
     },
     handleSave() {
+      let tableData = this.tableData.map((item) => {
+        let { _rowKey, _checks, ...newItem } = item;
+        return newItem;
+      });
       this.setVmData({
         type: "data",
         renderKey: this.defaultValue.renderKey,
         params: {
-          defaultValue: stringify(this.tableData),
+          defaultValue: stringify(tableData),
           field: this.validateForm.columnField,
         },
       });

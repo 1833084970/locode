@@ -3,7 +3,6 @@ import { stringify, parse } from "@/utils";
 
 import Vue from "vue";
 function childSlot(h, confClone, children) {
-  console.log(this);
   let { tag, optionDataKey } = confClone;
   let optionData = this.$store.state.pageConfig.vmData.data[optionDataKey].defaultValue;
   parse(optionData).forEach((item) => {
@@ -76,7 +75,11 @@ function buildDataObject(h, confClone, dataObject, children) {
         let attrValue = [];
         if (attr.value && this.$store.state.pageConfig.vmData.data[attr.value]) {
           attrValue = this.$store.state.pageConfig.vmData.data[attr.value].defaultValue;
-          attrValue = parse(attrValue);
+          try {
+            attrValue = parse(attrValue);
+          } catch (error) {
+            attrValue = [];
+          }
         }
         dataObject.attrs[attr.field] = attrValue;
         return;

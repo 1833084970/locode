@@ -70,6 +70,11 @@ export default {
     //   return this.activeComponent.attrs || [];
     // },
   },
+  watch: {
+    activeElementId() {
+      this.activeName = "attr";
+    },
+  },
   mounted() {},
 
   methods: {

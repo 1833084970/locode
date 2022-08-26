@@ -115,7 +115,7 @@ export default {
       return !this.selectDisabled && this.tags.length == 0 ? "请选择" : "";
     },
     normalizeVal() {
-      if (!this.value) {
+      if (!this.value || Object.keys(this.value).length == 0) {
         return [];
       }
       if (this.multiple) {
@@ -165,8 +165,8 @@ export default {
       }
     },
     setValue(val) {
-      this.$emit("input", val);
       this.emitChange(val);
+      this.$emit("input", val);
     },
     // formatVal(val) {
     //   if (this.valType == "Object") {

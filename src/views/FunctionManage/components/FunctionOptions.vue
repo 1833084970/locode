@@ -1,64 +1,85 @@
 <template>
-  <div class="model-options">
+  <div class="function-options">
     <el-scrollbar style="height: 100%">
-      <el-form
-        ref="elForm"
-        :model="formData"
-        :rules="rules"
-        label-width="120px"
-        v-if="currentRow"
-        @validate="onValidate"
-      >
-        <el-form-item label="方法名称" prop="field">
-          <el-input
-            v-model.trim="formData.field"
-            placeholder="请输入方法名称"
-            clearable
-            :style="{ width: '100%' }"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="中文名称" prop="title">
-          <el-input
-            v-model.trim="formData.title"
-            clearable
-            :style="{ width: '100%' }"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input
-            v-model.trim="formData.description"
-            clearable
-            :style="{ width: '100%' }"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="形参" prop="params">
-          <el-input
-            v-model.trim="formData.params"
-            placeholder="多个形参请用英文逗号分隔"
-            clearable
-            :style="{ width: '100%' }"
-          ></el-input>
-        </el-form-item>
-        <el-form-item prop="value">
-          <MonacoEditor
-            :key="formData.renderKey"
-            v-model="formData.value"
-            height="400px"
-            :fixedOptions="{
-              show: true,
-              name: formData.field,
-              params: formData.params,
-            }"
-          />
-        </el-form-item>
-      </el-form>
+      <el-row :gutter="20">
+        <el-form
+          ref="elForm"
+          :model="formData"
+          :rules="rules"
+          label-width="120px"
+          v-if="Object.keys(formData).length > 0"
+          @validate="onValidate"
+        >
+          <el-col :span="24" :offset="0">
+            <el-form-item label="模板" prop="tpl">
+              <modal-select
+                v-model="functionTpl"
+                @change="onTplChange"
+                modal="FunctionTemplateModal"
+                :style="{ width: '100%' }"
+                :defaultProps="{
+                  value: 'key',
+                  label: 'name',
+                }"
+                icon="el-icon-search"
+              ></modal-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :offset="0">
+            <el-form-item label="方法名称" prop="field">
+              <el-input
+                v-model.trim="formData.field"
+                placeholder="请输入方法名称"
+                clearable
+                :style="{ width: '100%' }"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col
+            v-for="item in extraVar"
+            :key="item.field"
+            :span="12"
+            :offset="0"
+          >
+            <option-component
+              :model="item"
+              @change="onExtraVarChange($event, item)"
+            />
+          </el-col>
+          <el-col :span="12" :offset="0">
+            <el-form-item label="描述" prop="description">
+              <el-input
+                v-model.trim="formData.description"
+                clearable
+                :style="{ width: '100%' }"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :offset="0">
+            <el-form-item label="形参" prop="params">
+              <el-input
+                v-model.trim="formData.params"
+                placeholder="多个形参请用英文逗号分隔"
+                clearable
+                :style="{ width: '100%' }"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :offset="0">
+            <el-form-item prop="value">
+              <FunctionEditor :model="formData" :functionTpl="functionTpl" />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
     </el-scrollbar>
   </div>
 </template>
 
 <script>
 import { debounce } from "throttle-debounce";
-
+import methodTpl from "@/render/methodTpl";
+import { deepClone } from "@/utils";
 export default {
   name: "FunctionOptions",
   props: {
@@ -143,23 +164,49 @@ export default {
           },
         ],
       },
+      functionTpl: null,
+      // modalProps: {},
     };
   },
   computed: {
     formData() {
       return this.currentRow || {};
     },
-    language() {
-      if (["Array", "Object"].includes(this.formData.type)) {
-        return "json";
-      }
-      return "javascript";
+    extraVar() {
+      return (
+        this.functionTpl?.extraVar.filter((item) => {
+          if (!item.isCode) {
+            let value = this.formData.extraVar[item.field];
+            if (item.isLinkModel && value) {
+              let [key] = value.split("-");
+              let field =
+                this.$store.state.pageConfig[item.isLinkModel][key][value]
+                  ?.field;
+              value = {
+                field,
+                renderKey: value,
+              };
+            }
+            item.component.value = value;
+            return true;
+          }
+        }) || []
+      );
     },
   },
   watch: {
     "currentRow.renderKey": {
       handler(val) {
         this.$refs.elForm && this.$refs.elForm?.validate();
+        if (this.formData && this.formData.template) {
+          this.functionTpl = this.findElement(
+            methodTpl,
+            this.formData.template
+          );
+          this.functionTpl.extraVar.forEach((item) => {
+            item.value = this.formData.extraVar[item.field] ?? item.value;
+          });
+        }
       },
       immediate: true,
     },
@@ -167,18 +214,54 @@ export default {
   mounted() {},
 
   methods: {
+    findElement(list, key) {
+      let res = null;
+      const find = (list) => {
+        list.some((item) => {
+          if (item.key == key) {
+            res = deepClone(item);
+            return true;
+          }
+          if (item.children) {
+            return find(item.children);
+          }
+        });
+      };
+      find(list);
+      return res;
+    },
+    onExtraVarChange(val, extraVar) {
+      this.formData.extraVar[extraVar.field] =
+        extraVar.component.format?.(val) ?? val;
+      // this.$set(this.formData.extraVar, currentField, val.renderKey);
+    },
+    onTplChange(tpl) {
+      if (tpl) {
+        this.formData.template = tpl.key;
+        Object.keys(this.formData).forEach((key) => {
+          if (tpl[key]) {
+            this.formData[key] = this.formData[key] ?? tpl[key];
+          }
+        });
+        this.formData.extraVar = tpl.extraVar.reduce((res, current) => {
+          res[current.field] =
+            this.formData.extraVar[current.field] ?? current.value;
+          return res;
+        }, {});
+      }
+    },
     onValidate() {},
   },
 };
 </script>
 
 <style lang="scss">
-.model-options {
+.function-options {
   height: 100%;
   .el-form {
     padding: 40px;
     width: 100%;
-    max-width: 800px;
+    // max-width: 800px;
   }
 }
 </style>
