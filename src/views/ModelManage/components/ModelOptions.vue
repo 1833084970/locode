@@ -42,10 +42,9 @@
         >
           <MonacoEditor
             v-model="formData.defaultValue"
-            v-if="['Array', 'Object', 'Function'].includes(checkType)"
-            :language="language"
+            v-if="['Array', 'Object'].includes(checkType)"
+            language="json"
             height="240px"
-            :fixedOptions="fixedOptions"
           />
           <el-radio-group
             v-model="formData.defaultValue"
@@ -88,7 +87,6 @@
         </el-form-item>
       </template>
     </el-form>
-    <CodemirrorEditor></CodemirrorEditor>
   </div>
 </template>
 
@@ -138,13 +136,6 @@ export default {
         return callback();
       }
       try {
-        if (
-          this.checkType == "Function" &&
-          eval(`(function (){${this.currentRow.defaultValue}})`) instanceof
-            Function
-        ) {
-          return callback();
-        }
         let parseJson = JSON.parse(`${this.currentRow.defaultValue}`);
         if (this.checkType == "Array" && parseJson instanceof Array) {
           return callback();
@@ -191,10 +182,6 @@ export default {
           label: "对象",
           value: "Object",
         },
-        {
-          label: "方法",
-          value: "Function",
-        },
       ],
       rules: {
         field: [
@@ -232,21 +219,8 @@ export default {
     };
   },
   computed: {
-    fixedOptions() {
-      if (this.checkType == "Function") {
-        return {
-          show: true,
-        };
-      }
-    },
     formData() {
       return this.currentRow || {};
-    },
-    language() {
-      if (["Array", "Object"].includes(this.formData.type)) {
-        return "json";
-      }
-      return "javascript";
     },
   },
   watch: {
